@@ -192,14 +192,23 @@ fun CategoryItem(category: Category, selectedCategories: List<Category>, onItemC
 
     Row(
         modifier = Modifier
-            .padding(start = 16.dp * category.subcategories.size)
+            .padding(top = 10.dp)
             .clickable { onItemClick(category) }
     ) {
 
-        Text(text = category.name,
-            color = Color.White,
-            modifier = Modifier
-                .padding(start = 16.dp * category.subcategories.size))
+        if (category.name in listOf("All", "1 Room", "2 Room" , "And So on....")) {
+            Text(text = category.name,
+                color = Color.White,
+                modifier = Modifier
+                    .padding(start = 16.dp ))
+        }else {
+            Text(text = category.name,
+                color = Color.White,
+                fontWeight = FontWeight(600),
+                modifier = Modifier
+                    .padding(start = 24.dp))
+        }
+
         Spacer(modifier = Modifier.width(8.dp))
         Icon(
             painter = painterResource(if (isSelected) R.drawable.baseline_done_24 else R.drawable.ic_launcher_foreground),
@@ -212,6 +221,11 @@ fun CategoryItem(category: Category, selectedCategories: List<Category>, onItemC
         category.subcategories.forEach { subcategory ->
             CategoryItem(subcategory, selectedCategories, onItemClick)
 //        }
+    }
+    // Draw divider below specific categories
+    if (category.name in listOf("All", "Sub Category C", "Sub Category F")) {
+        Divider(color = Color(0XFF252328), modifier = Modifier
+            .padding(top = 10.dp, start = 10.dp))
     }
 }
 
@@ -245,7 +259,8 @@ fun PreviewCategoryScreen() {
             Category("Sub Category D"),
             Category("Sub Category E"),
             Category("Sub Category F"),
-        ))
+        )),
+        Category("And So on....")
     )
     CategoryScreen(categories)
 }
