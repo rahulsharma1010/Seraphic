@@ -25,6 +25,7 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.KeyboardArrowDown
+import androidx.compose.material.icons.filled.KeyboardArrowLeft
 import androidx.compose.material3.Card
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.Divider
@@ -157,14 +158,30 @@ class MainActivity : ComponentActivity() {
 
 data class Category(val name: String, val subcategories: List<Category> = listOf())
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CategoryScreen(categories: List<Category>) {
     var selectedCategories by remember { mutableStateOf(emptyList<Category>()) }
 
     Scaffold(
-        modifier = Modifier
-            .background(Color.Black),
-    ) {
+        topBar = {
+            TopAppBar(
+                title = {
+                    Text(text = "")
+                },
+                navigationIcon = {
+                    IconButton(onClick = {}) {
+                        Icon(Icons.Filled.KeyboardArrowLeft, "backIcon",
+                            tint = Color.White
+                        )
+                    }
+                },
+                colors = TopAppBarDefaults.smallTopAppBarColors(
+                    containerColor = Color.Black,
+                    titleContentColor = Color.White,
+                ),
+            )
+        }, content = {
 //            customListView(LocalContext.current)
         Column(
             modifier = Modifier
@@ -174,6 +191,15 @@ fun CategoryScreen(categories: List<Category>) {
 //                verticalArrangement = Arrangement.Center,
 //                horizontalAlignment = Alignment.CenterHorizontally
         ) {
+            Text(
+                text = "Choose Category",
+                fontSize = 24.sp,
+                color = Color.White,
+                fontWeight = FontWeight(500),
+                modifier = Modifier
+                    .padding(start = 10.dp)
+            )
+
             LazyColumn {
                 items(categories) { category ->
                     CategoryItem(category, selectedCategories) { clickedCategory ->
@@ -182,7 +208,7 @@ fun CategoryScreen(categories: List<Category>) {
                 }
             }
         }
-    }
+    })
 
 }
 
@@ -264,65 +290,3 @@ fun PreviewCategoryScreen() {
     )
     CategoryScreen(categories)
 }
-    @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
-    @OptIn(ExperimentalMaterial3Api::class)
-    @Composable
-    fun Screen2(navController: NavHostController) {
-        Scaffold(
-            modifier = Modifier
-                .background(Color.Black),
-        ) {
-//            customListView(LocalContext.current)
-            Column(
-                modifier = Modifier
-                    .padding(it)
-                    .fillMaxSize()
-                    .background(Color.Black)
-//                verticalArrangement = Arrangement.Center,
-//                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                TreeListView()
-            }
-        }
-    }
-
-
-@Composable
-fun TreeListView() {
-    val treeData = listOf(
-        TreeNode("All"),
-        TreeNode("1 Room", listOf(
-            TreeNode("Sub Category A")
-        )),
-        TreeNode("2 Room", listOf(
-            TreeNode("Sub Category B"),
-            TreeNode("Sub Category C"),
-            TreeNode("Sub Category D")
-        ))
-    )
-
-    LazyColumn {
-        itemsIndexed(treeData) { index, node ->
-            TreeNodeItem(node)
-
-        }
-    }
-}
-
-@Composable
-fun TreeNodeItem(node: TreeNode) {
-    Column(
-        modifier = Modifier.padding(start = 20.dp)
-    ) {
-        Text(text = node.name,
-            color = Color.White, modifier = Modifier.padding(vertical = 4.dp))
-        node.children.forEach { child ->
-            TreeNodeItem(child)
-            if (child.name == "All" || child.name == "Sub Category A" || child.name == "Sub Category D") {
-                Divider(Modifier.padding(vertical = 4.dp))
-            }
-        }
-    }
-}
-
-data class TreeNode(val name: String, val children: List<TreeNode> = emptyList(), val depth: Int = 0)
